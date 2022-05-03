@@ -11,7 +11,7 @@ This is the old Spree Storefront extracted from Spree < 4.3.
 Add
 
 ```ruby
-gem 'spree_frontend'
+gem "spree_frontend", "~> 4.4.0", git: "https://github.com/dylanfisher/spree_legacy_frontend.git", branch: "4-4-stable"
 ```
 
 to your `Gemfile`.
