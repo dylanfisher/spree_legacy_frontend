@@ -9,12 +9,18 @@ module Spree
     end
 
     def logo(image_path = nil, options = {})
-      image_path ||= if current_store.logo.attached? && current_store.logo.variable?
-                       main_app.url_for(current_store.logo.variant(resize: '244x104>'))
-                     elsif current_store.logo.attached? && current_store.logo.image?
-                       main_app.url_for(current_store.logo)
+      logo_attachment = if defined?(Spree::StoreLogo) && current_store.logo.is_a?(Spree::StoreLogo)
+                          current_store.logo.attachment # Spree v5
+                        else
+                          current_store.logo # Spree 4.x
+                        end
+
+      image_path ||= if logo_attachment&.attached? && logo_attachment&.variable?
+                       main_app.cdn_image_url(logo_attachment.variant(resize: '244x104>'))
+                     elsif logo_attachment&.attached? && logo_attachment&.image?
+                       main_app.cdn_image_url(current_store.logo)
                      else
-                      'logo/spree_50.png'
+                       asset_path('logo/spree_50.png')
                      end
 
       path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
@@ -165,7 +171,7 @@ module Spree
       image = default_image_for_product_or_variant(product)
 
       image_url = if image.present?
-                    main_app.url_for(image.url('plp'))
+                    main_app.cdn_image_url(image.url('plp'))
                   else
                     asset_path('noimage/plp.svg')
                   end
@@ -200,7 +206,7 @@ module Spree
       widths = { lg: 1200, md: 992, sm: 768, xs: 576 }
       set = []
       widths.each do |key, value|
-        file = main_app.url_for(image.url("plp_and_carousel_#{key}"))
+        file = main_app.cdn_image_url(image.url("plp_and_carousel_#{key}"))
 
         set << "#{file} #{value}w"
       end
@@ -352,7 +358,7 @@ module Spree
     def spree_social_link(service)
       return '' if current_store.send(service).blank?
 
-      link_to "https://#{service}.com/#{current_store.send(service)}", target: :blank, rel: 'nofollow noopener', 'aria-label': service do
+      link_to "https://#{service}.com/#{current_store.send(service)}", target: '_blank', rel: 'nofollow noopener', 'aria-label': service do
         content_tag :figure, id: service, class: 'px-2' do
           icon(name: service, width: 22, height: 22)
         end

@@ -6,7 +6,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
   actionmailer actionpack actionview activejob activemodel activerecord
   activestorage activesupport railties
 ].each do |rails_gem|
-  gem rails_gem, ENV.fetch('RAILS_VERSION', '~> 6.1.0'), require: false
+  gem rails_gem, ENV.fetch('RAILS_VERSION', '~> 7.0.0'), require: false
 end
 
 platforms :jruby do
@@ -49,16 +49,12 @@ group :test, :development do
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'
   gem 'webdrivers', '~> 4.1'
-  gem 'puma'
+  # Puma 6.0 causes issues in specs due to conflict with capybara version
+  gem 'puma', '< 6.0'
   gem 'ffaker'
 end
 
-group :development do
-  gem 'github_fast_changelog'
-  gem 'solargraph'
-end
-
-spree_opts = { github: 'spree/spree', branch: ENV.fetch('SPREE_BRANCH', '4-4-stable') }
+spree_opts = { github: 'spree/spree', branch: ENV.fetch('SPREE_BRANCH', 'main') }
 gem 'spree_core', spree_opts
 gem 'spree_api', spree_opts
 

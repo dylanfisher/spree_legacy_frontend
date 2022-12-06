@@ -48,7 +48,9 @@ require 'webdrivers'
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
-Rails.application.routes.default_url_options[:host] = 'example.com'
+def wait_for_turbo
+  expect(page).to have_no_css '.turbo-progress-bar'
+end
 
 RSpec.configure do |config|
   config.color = true

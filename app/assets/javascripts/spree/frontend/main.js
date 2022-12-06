@@ -2,7 +2,7 @@
 function Spree () {}
 
 Spree.ready = function (callback) {
-  return jQuery(document).on('page:load turbolinks:load', function () {
+  return jQuery(document).on('page:load turbo:load', function () {
     return callback(jQuery)
   })
 }
@@ -32,7 +32,7 @@ Spree.localizedPathFor = function(path) {
     if (pathName.match(/api\/v/)) {
       params.set('locale', SPREE_LOCALE)
     } else {
-      pathName = (this.mountedAt()) + SPREE_LOCALE + '/' + path
+      pathName = (this.mountedAt()) + SPREE_LOCALE + '/' + pathName
     }
     return fullUrl.origin + pathName + '?' + params.toString()
   }
@@ -68,11 +68,11 @@ Spree.ajax = function (urlOrSettings, settings) {
 }
 
 Spree.routes = {
-  states_search: Spree.pathFor('api/v1/states'),
+  states_search: Spree.localizedPathFor('api/v1/states'),
   apply_coupon_code: function (orderId) {
-    return Spree.pathFor('api/v1/orders/' + orderId + '/apply_coupon_code')
+    return Spree.localizedPathFor('api/v1/orders/' + orderId + '/apply_coupon_code')
   },
-  cart: Spree.pathFor('cart')
+  cart: Spree.localizedPathFor('cart')
 }
 
 Spree.url_params = {}

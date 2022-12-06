@@ -1,4 +1,4 @@
-//= require spree/api/storefront/cart
+//= require spree/frontend/api/storefront/cart
 //= require ../shared/product_added_modal
 //= require ../shared/variant_select
 
@@ -89,7 +89,7 @@ function CartForm($, $cartForm) {
     this.selectedOptionValueIds.splice(
       optionTypeIndex,
       this.selectedOptionValueIds.length,
-      parseInt($optionValue.val())
+      $optionValue.val().toString()
     )
   }
 
@@ -104,7 +104,7 @@ function CartForm($, $cartForm) {
         .find(OPTION_VALUE_SELECTOR)
         .each(function(_index, ov) {
           var $ov = $(ov)
-          var id = parseInt($ov.val())
+          var id = $ov.val().toString()
 
           $ov.prop('checked', false)
           $ov.prop('disabled', !availableOptionValueIds.includes(id))
@@ -121,7 +121,7 @@ function CartForm($, $cartForm) {
 
     return this.variants.reduce(function(acc, variant) {
       var optionValues = variant.option_values.map(function(ov) {
-        return ov.id
+        return ov.id.toString()
       })
 
       var isPossibleVariantFound = selectedOptionValueIds.every(function(ov) {
@@ -180,7 +180,7 @@ function CartForm($, $cartForm) {
 
     if (!this.withOptionValues) {
       return this.variants.find(function(variant) {
-        return variant.id === parseInt(self.$variantIdInput.val())
+        return variant.id && self.$variantIdInput.val() && variant.id.toString() === self.$variantIdInput.val().toString()
       })
     }
 
@@ -190,7 +190,7 @@ function CartForm($, $cartForm) {
 
     return this.variants.find(function(variant) {
       var optionValueIds = variant.option_values.map(function(ov) {
-        return ov.id
+        return ov.id.toString()
       })
 
       return self.areArraysEqual(optionValueIds, self.selectedOptionValueIds)
@@ -298,7 +298,7 @@ Spree.ready(function($) {
         quantity,
         options, // options hash - you can pass additional parameters here, your backend
         // needs to be aware of those, see API docs:
-        // https://github.com/spree/spree/blob/master/api/docs/v2/storefront/index.yaml#L42
+        // https://github.com/spree/spree/blob/d894358e49b8c3a7f6944e838de7cd92510e31d0/api/docs/v2/storefront/index.yaml#L442
         function(response) {
           $addToCart.prop('disabled', false)
           Spree.fetchCart()
@@ -331,7 +331,7 @@ Spree.ready(function($) {
     CartForm($, $cartForm)
   })
 
-  document.addEventListener('turbolinks:request-start', function () {
+  document.addEventListener('turbo:request-start', function () {
     Spree.hideProductAddedModal()
   })
 })
